@@ -266,6 +266,7 @@ dds <- DESeq2.tax.specific(
 # extract norm list from dds & dds
 norm.list <- dds$norm.list
 names(norm.list) <- org_list
+
 #saveRDS(norm.list, file = "results/DESeq2_taxon_specific_normalized_counts.rds")
 
 # extract normalised matrix
