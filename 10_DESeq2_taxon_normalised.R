@@ -192,6 +192,10 @@ DESeq2.tax.specific <- function(Xarray, Xlist, cond.vec) {
     mat <- DESeq2.norm.mat(mat, cond.vec = cond.vec)
     
     norm.list[[i]] <- mat
+    
+    # save data frame
+    cat("Normalized matrix dimensions for organism", i, ":", dim(mat), "\n")
+    
 }
   # ---- REPAD ALL NORMALIZED MATRICES BEFORE SUMMING ----
   
@@ -238,7 +242,7 @@ DESeq2.tax.specific <- function(Xarray, Xlist, cond.vec) {
   # Zero-safe size factor estimation
   dds <- estimateSizeFactors(dds, type = "poscounts")
   
-  return(dds)
+  return(list(norm.list = norm.list, dds = dds, Scaled.Mat = Scaled.Mat))
 }
 
 
@@ -251,10 +255,22 @@ dds <- DESeq2.tax.specific(
 
 )
 
+# extract norm list from dds & dds
+norm.list <- dds$norm.list
+names(norm.list) <- org_list
+saveRDS(norm.list, file = "results/DESeq2_taxon_specific_normalized_counts.rds")
+
+# extract normalised matrix
+scaled_mat <- dds$Scaled.Mat
+write.csv(scaled_mat, file = "results/DESeq2_taxon_specific_scaled_matrix.csv")
+
+# extract DESEq2 object
+dds <- dds$dds
+
 dim(dds)
 
 # Filter low count genes
-idx <- rowSums(counts(dds, normalized=FALSE) >= 1) >= 3
+idx <- rowSums(counts(dds, normalized=FALSE) >= 2) >= 3
 dds.f <- dds[idx, ]
 dim(dds.f)
 
@@ -281,6 +297,9 @@ head(coef(dds.f))
 # Blue dots are significant logFC
 res.lfc <- lfcShrink(dds.f, coef=2, res=res)
 DESeq2::plotMA(res.lfc)
+
+res_log2FC <- res.lfc$log2FoldChange
+
 
 # Set tresholds
 FDRthreshold = 0.01
@@ -334,3 +353,4 @@ save_pheatmap_pdf(mat,
 # write csv
 write.csv( res ,'results/DB092_deseq2_results.csv' )
 write.csv(as.data.frame(res.lfc), "results/DB092_deseq2_results_shrunken.csv")
+
