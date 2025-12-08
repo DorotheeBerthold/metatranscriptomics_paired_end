@@ -45,8 +45,16 @@ genes_t <- genes_t %>%
 
 # Split big gene matrix by organism -------------------------------------------------------
 
+# Add 1 to every count to avoid zeros
+genes_t <- genes_t + 1
+
 # extract organism ID from row names
-genes_t$org <- sub(".*\\.", "", rownames(genes_t))  
+genes_t$org <- sub(".*\\.", "", rownames(genes_t)) 
+
+# Filter out rows where rowSums are <300
+#genes_t <- genes_t[rowSums(genes_t[, 1:ncol(genes_t)-1]) >= 300, ]
+
+
 
 # list of organism IDs present in count table
 org_list <- unique(genes_t$org)
@@ -258,11 +266,12 @@ dds <- DESeq2.tax.specific(
 # extract norm list from dds & dds
 norm.list <- dds$norm.list
 names(norm.list) <- org_list
-saveRDS(norm.list, file = "results/DESeq2_taxon_specific_normalized_counts.rds")
+
+#saveRDS(norm.list, file = "results/DESeq2_taxon_specific_normalized_counts.rds")
 
 # extract normalised matrix
 scaled_mat <- dds$Scaled.Mat
-write.csv(scaled_mat, file = "results/DESeq2_taxon_specific_scaled_matrix.csv")
+#write.csv(scaled_mat, file = "results/DESeq2_taxon_specific_scaled_matrix.csv")
 
 # extract DESEq2 object
 dds <- dds$dds
