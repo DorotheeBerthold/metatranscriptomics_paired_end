@@ -14,9 +14,6 @@ library(stringr)
 results <- read.csv("results/DB092_deseq2_results_shrunken.csv", row.names = 1)
 results$genes <- rownames(results)
 
-# Filter foreach organism by using grepl on rownames
-org_list <- c("I46","I48","YL2","YL31", "YL32", "YL44", "YL45", "YL58")
-
 # separate genes column into two based on .
 bacteria_results <- results %>% 
   separate(genes, into = c("gene", "bacteria"), sep = "\\.") %>% 
@@ -26,8 +23,8 @@ bacteria_results <- results %>%
                                 "UP" = "+fiber", 
                                 "DOWN" = "-fiber")) 
 
-sig_results <- bacteria_results %>% 
-  filter(diffexpressed != "")
+#sig_results <- bacteria_results %>% 
+ # filter(diffexpressed != "")
 
 # Generate FASTA files for KAAS & eggNOG submission -----------------------------------
 
@@ -35,9 +32,6 @@ org_list <- c("I46","I48","YL2","YL31", "YL32", "YL44", "YL45", "YL58")
 
 for(org in org_list) {
   message("Preparing FASTA for organism: ", org)
-  
-  # Filter results for this organism
-  org_results <- sig_results %>% filter(bacteria == org)
   
   # Read GBFF file
   gbff_lines <- readLines(paste0("OMM_gbff/", org, ".gbff"))
@@ -80,17 +74,18 @@ for(org in org_list) {
 #    - Download the results as "<organism>_kaas.txt" and save in "fasta_protein/" folder
 
 # 2. eggNOG-mapper: https://emapper.embl.de/
-#    - Use 12b_eggnog_map_loop.sh script to batch submit FASTA files
+#    - Use eggnog_map_loop.sh script to batch submit FASTA files
 #    - Download the results as "<organism>.emapper.annotations" and save in "eggnog_annotations/" folder
 
 # Combine annotations with DE results  -------------------------------------------------
-
 
 for(org in org_list) {
   message("Processing annotations for organism: ", org)
   
   # Read original results & saved annotations
-  org_results <- sig_results %>% filter(bacteria == org)
+  org_results <- bacteria_results %>% 
+    filter(bacteria == org)
+  
   anno <- read_rds(paste0("temp_annotations/", org, "_anno.rds"))
   
   org_results_annot <- inner_join(org_results, anno, by = c("gene" = "locus_tag"))
