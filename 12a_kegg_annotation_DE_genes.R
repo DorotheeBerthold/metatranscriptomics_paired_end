@@ -80,7 +80,7 @@ for(org in org_list) {
 #    - Download the results as "<organism>_kaas.txt" and save in "fasta_protein/" folder
 
 # 2. eggNOG-mapper: https://emapper.embl.de/
-#    - Use eggnog_map_loop.sh script to batch submit FASTA files
+#    - Use 12b_eggnog_map_loop.sh script to batch submit FASTA files
 #    - Download the results as "<organism>.emapper.annotations" and save in "eggnog_annotations/" folder
 
 # Combine annotations with DE results  -------------------------------------------------
