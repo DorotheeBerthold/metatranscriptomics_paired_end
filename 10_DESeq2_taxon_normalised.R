@@ -132,25 +132,22 @@ cond.vec <- factor(cond.vec, levels = c("no_fiber", "fiber"))
 
 # DESeq2 normalisation function ----------------------------------------------------------
 
-DESeq2.norm.mat <- function(Xmat, cond.vec) {
-  # Round counts and ensure integer
-  Xmat <- round(Xmat)
+DESeq2.norm.mat <- function(Xmat,cond.vec)
+{
+  #Xmat = raw count data for one species
+  Xmat.col = ncol(Xmat)
+  Xmat.row = nrow(Xmat)
+  colData <- data.frame(condition = cond.vec)
+  Xmat = round(Xmat)
   storage.mode(Xmat) <- 'integer'
-  
-  # Build DESeq2 dataset
-  colData <- data.frame(condition = factor(cond.vec, levels = unique(cond.vec)))
   dds <- DESeqDataSetFromMatrix(countData = Xmat, colData = colData, design = ~condition)
-
-  # Normalize counts by size factors
-  # Zero-safe normalization
-  dds <- estimateSizeFactors(dds, type = "poscounts")
-  
-  # Get normalized counts
-  YMat <- counts(dds, normalized = TRUE)
-  
+  colData(dds)$condition = factor(colData(dds)$condition, levels=unique(cond.vec))
+  dds <- DESeq(dds, quiet = TRUE)
+  #normalize the data
+  YMat <- Xmat/rep(dds@colData@listData$sizeFactor, each = (Xmat.row))
   return(YMat)
 }
-
+                
 # DESeq2 taxon-specific normalisation function ----------------------------------------------------
 
 DESeq2.tax.specific <- function(Xarray, Xlist, cond.vec) {
