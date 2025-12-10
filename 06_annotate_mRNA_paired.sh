@@ -11,6 +11,10 @@ module load bwa
 module load samtools
 module load vsearch
 
+############### RUN BEFORE SUBMITTING TO SBATCH #############################
+#bwa index -a bwtsw "$REF"
+#############################################################################
+
 # -------- INPUTS --------
 READ_DIR="rRNA_filtered"
 REF="OMM12_pseudogenome.fasta"        # Your pseudogenome
@@ -28,7 +32,6 @@ SAMPLE=${BASENAME%_R1_unique_mRNA.fastq}
 
 
 # Index the microbial genome database
-#bwa index -a bwtsw "$REF"
 samtools faidx "$REF"
 
 echo "Processing sample: $SAMPLE"
