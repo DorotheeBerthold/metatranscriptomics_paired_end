@@ -1,6 +1,8 @@
 # Metatranscriptomics Paired-End Analysis Pipeline
 
-A comprehensive workflow for processing and analyzing paired-end metatranscriptomic data. This pipeline performs quality control, read preprocessing, contamination removal, taxonomic/functional annotation, and statistical analysis to identify differentially expressed genes across conditions.
+
+A comprehensive workflow for processing and analyzing paired-end metatranscriptomic data. This pipeline performs quality control, read preprocessing, contamination removal, taxonomic/functional annotation, and statistical analysis to identify differentially expressed genes across conditions. It has been optimised for paired-end data processed on a high-performance cluster (HPC) to submit via slurm.
+
 
 ---
 
@@ -26,13 +28,14 @@ A comprehensive workflow for processing and analyzing paired-end metatranscripto
 - **06_annotate_mRNA_paired.sh** — Map mRNA reads to pseudogenome using BWA
 - **06b_annotate_rRNA_paired.sh** — Map rRNA reads to pseudogenome
 - **07_count_reads_paired.sh** — Count reads mapped to each gene using featureCounts
-- **run_cayman.sh** — Annotate protein sequences with CAYMAN (functional annotation)
 
 ### Statistical Analysis & Visualization
 - **08_merge_counts.R** — Merge read count data from all samples
 - **09_PCA.R** — Perform PCA analysis and visualization
 - **10_DESeq2_taxon_normalised.R** — Differential expression analysis using DESeq2 (taxon-normalized)
 - **11a_functional_annotation_genomes.R** — Annotate genomes with functional information
+  - **run_cayman.sh** — Annotate protein sequences with CAYMAN (functional annotation)
+  - **eggnog_map_loop.sh** - Annotate protein sequences with eggnog
 - **11b_merge_functional_annotations_DESEq2.R** — Merge functional annotations with DESeq2 results
 - **11c_extract_cazyme_protein_sequences.R** — Extract CAZyme sequences
 - **12_volcanoplots.R** — Generate volcano plots for DESeq2 results
@@ -153,6 +156,8 @@ sbatch 03_remove_vector_contamination_paired.sh
 **Output:** `quality_vector_rm_reads/*` (clean reads), `quality_vector_rm_reads/*_contam` (contaminated reads)
 
 #### 2.2 Remove Host Reads (Optional)
+download and index host genome first, change the location of the database in the script
+
 ```bash
 sbatch 03b_remove_host_reads_paired.sh
 ```
@@ -213,20 +218,9 @@ sbatch 07_count_reads_paired.sh
 **Process:** Uses featureCounts with GFF3 annotations  
 **Output:** `annotation_results/{SAMPLE}/gene_counts.txt`
 
-#### 4.4 Functional Annotation with CAYMAN
-```bash
-# Requires:
-# - .faa protein files in "cleaned_faa files/" directory
-# - CAYMAN database in "v3/" directory
-# - Cutoffs file: "v3/cutoffs.csv"
-
-bash run_cayman.sh
-```
-**Output:** `cleaned_faa files/cayman/*_cayman.csv` (functional annotations)
-
 ---
 
-### **PHASE 5: Statistical Analysis**
+### **PHASE 5: Statistical Analysis & Functional Annotation **
 
 #### 5.1 Merge Read Counts Across Samples
 ```bash
@@ -266,6 +260,28 @@ Rscript 10_DESeq2_taxon_normalised.R
 ```bash
 Rscript 11a_functional_annotation_genomes.R
 ```
+
+#### 6.1.1 Functional Annotation with CAYMAN
+```bash
+# Requires:
+# - .faa protein files in "cleaned_faa files/" directory
+# - CAYMAN database in "v3/" directory
+# - Cutoffs file: "v3/cutoffs.csv"
+
+bash run_cayman.sh
+```
+
+**Output:** `cleaned_faa files/cayman/*_cayman.csv` (functional annotations CAZymes)
+
+#### 6.1.2 Functional Annotation with eggnog
+```bash
+# Requires:
+# - .faa protein files in "cleaned_faa files/" directory
+# - eggnog database in cayman directory
+
+bash eggnog_map_loop.sh
+```
+**Output:** `eggnog_annotations/*.emapper.annotations` (functional annotations KEGG)
 
 #### 6.2 Merge Functional Annotations with DESeq2 Results
 ```bash
@@ -337,7 +353,8 @@ trimmed_fastqc/                         # Quality reports
   - VSEARCH (homology search)
   - Infernal (rRNA detection)
   - featureCounts (read counting)
-  - CAYMAN (functional annotation)
+  - CAYMAN (functional annotation CAZymes)
+  - eggnog (functional annotation KEGG)
 
 - **R Packages:**
   - DESeq2
