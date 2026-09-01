@@ -42,35 +42,40 @@ substrate_mapping <- read_excel(file_cayman, sheet = 1) %>%
 
 # 4. Integrate Annotations & Assign Categories ---------------------------------
 
+# Import KEGG master dict with the curated pathways
+# Layout: kegg_id, Gene_Name, Pathway
+kegg_df <- read.csv("tables/kegg_master_dict.csv")
+
 bacteria_cz <- bacteria_results %>%
   dplyr::rename(kegg_id = kegg_consensus) %>%
+  # Join substrate mapping
   left_join(substrate_mapping, by = c("cayman_family" = "Subfamily")) %>%
+  # Join the new tidy KEGG dictionary
+  left_join(kegg_df, by = c("kegg_id")) %>%
   mutate(
     category = case_when(
-      exists("galactose_metabolism_kos") & kegg_id %in% galactose_metabolism_kos ~ "galactose_metabolism",
+      # 1. Evaluate substrate-specific overrides first
       substrate == "xylan" ~ "xylan_degradation",
       substrate == "mucin" ~ "mucin_degradation",
       substrate == "both" ~ "xylan_and_mucin_degradation",
-      exists("xylose_transport_kos") & kegg_id %in% xylose_transport_kos ~ "xylose_transport",
-      exists("xylose_metabolism_kos") & kegg_id %in% xylose_metabolism_kos ~ "xylose_metabolism",
-      exists("arabinose_transport_kos") & kegg_id %in% arabinose_transport_kos ~ "arabinose_transport",
-      exists("arabinose_metabolism_kos") & kegg_id %in% arabinose_metabolism_kos ~ "arabinose_metabolism",
-      exists("multiple_sugar_transport_kos") & kegg_id %in% multiple_sugar_transport_kos ~ "multiple_sugar_transport",
-      exists("inositol_pathway_kos") & kegg_id %in% inositol_pathway_kos ~ "inositol_pathway",
-      exists("simple_sugar_transport_kos") & kegg_id %in% simple_sugar_transport_kos ~ "simple_sugar_transport",
-      exists("pts_system_kos") & kegg_id %in% pts_system_kos ~ "pts_system",
-      exists("mannose_pts_kos") & kegg_id %in% mannose_pts_kos ~ "pts_system",
+      
+      # 2. If it mapped to ANY category in your KEGG dict, use that category name
+      !is.na(Pathway) ~ Pathway,
+      
+      # 3. Glycan fallback
       !is.na(Glycan_annotation) & !str_detect(Glycan_annotation, "mucin|xylan") ~ Glycan_annotation,
+      
       TRUE ~ "other"
     )
   ) %>%
   select(-any_of("delabel"))
 
+
 # 5. Extract Gene Labels for Specific Categories --------------------------------
 
 target_categories <- c(
   "xylan_degradation", "arabinose_metabolism", "xylose_metabolism",
-  "galactose_metabolism", "pts_system", "abc_sugar_transporter", "inositol_pathway"
+  "galactose_metabolism", "pts_system", "abc_sugar_transport", "inositol_pathway"
 )
 
 gene_labels <- bacteria_cz %>%
@@ -79,12 +84,14 @@ gene_labels <- bacteria_cz %>%
   filter(category %in% target_categories) %>%
   mutate(
     delabel = case_when(
-      is.na(cayman_family) & is.na(gene) & exists("master_kegg_dict") & kegg_id %in% names(master_kegg_dict) ~ unname(master_kegg_dict[kegg_id]),
+      # Instead of looking up master_kegg_dict, just use the Gene_Name column we joined!
+      is.na(cayman_family) & is.na(gene) & !is.na(Gene_Name) ~ Gene_Name,
       is.na(cayman_family) ~ gene,
       TRUE ~ cayman_family
     )
   ) %>%
   select(locus_tag, bacteria, delabel)
+
 
 # Merge back labels & remove duplicates per organism
 bacteria_cz <- bacteria_cz %>%
