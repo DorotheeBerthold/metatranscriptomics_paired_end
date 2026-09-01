@@ -62,6 +62,7 @@ for (org in org_list) {
 #    - Download the results as "<organism>_kaas.txt" and save in "fasta_protein/" folder
 
 # 2. eggNOG-mapper: https://emapper.embl.de/
+#    - copy the cleaned .faa files to the cayman folder where also the eggNOG DB resides
 #    - Use eggnog_map_loop.sh script to batch submit FASTA files
 #    - Download the results as "<organism>.emapper.annotations" and save in "eggnog_annotations/" folder
 
@@ -75,7 +76,7 @@ for (org in org_list) {
 #    - Download the results as "<organism>_dbcan.txt" and save in "fasta_protein/" folder
 
 # 4. Cayman mapping for CAZyme families: 
-#   - copy the cleaned faa files into the cayman folder
+#   - copy the cleaned .faa files into the cayman folder
 #   - run run_cayman.sh from within the folder
 #   - copy the .csv to the "fasta_protein/" folder
 
