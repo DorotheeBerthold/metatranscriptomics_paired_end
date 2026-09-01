@@ -3,8 +3,8 @@
 # Define your paths here to keep the script clean
 DIR_INPUT="cleaned_faa files"
 DIR_OUTPUT="cleaned_faa files/cayman"
-DB_PATH="v3/" # <--- VERIFY THIS PATH
-CUTOFFS="v3/cutoffs.csv" # <--- VERIFY THIS PATH
+DB_PATH="v3/" 
+CUTOFFS="v3/cutoffs.csv" 
 
 mkdir -p "$DIR_OUTPUT"
 
