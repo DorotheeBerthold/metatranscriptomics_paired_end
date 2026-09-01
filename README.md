@@ -1,6 +1,8 @@
 # Metatranscriptomics Paired-End Analysis Pipeline
 
+
 A comprehensive workflow for processing and analyzing paired-end metatranscriptomic data. This pipeline performs quality control, read preprocessing, contamination removal, taxonomic/functional annotation, and statistical analysis to identify differentially expressed genes across conditions. It has been optimised for paired-end data processed on a high-performance cluster (HPC) to submit via slurm.
+
 
 ---
 
