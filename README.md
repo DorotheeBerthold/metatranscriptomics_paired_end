@@ -34,8 +34,8 @@ A comprehensive workflow for processing and analyzing paired-end metatranscripto
 - **09_PCA.R** — Perform PCA analysis and visualization
 - **10_DESeq2_taxon_normalised.R** — Differential expression analysis using DESeq2 (taxon-normalized)
 - **11a_functional_annotation_genomes.R** — Annotate genomes with functional information
-  - **run_cayman.sh** — Annotate protein sequences with CAYMAN (functional annotation)
-  - **eggnog_map_loop.sh** - Annotate protein sequences with eggnog
+  - **run_cayman.sh** — Annotate protein sequences with CAYMAN (functional annotation CAZymes)
+  - **eggnog_map_loop.sh** - Annotate protein sequences with eggnog (functional annotation KEGG IDs)
 - **11b_merge_functional_annotations_DESEq2.R** — Merge functional annotations with DESeq2 results
 - **11c_extract_cazyme_protein_sequences.R** — Extract CAZyme sequences
 - **12_volcanoplots.R** — Generate volcano plots for DESeq2 results
@@ -220,7 +220,7 @@ sbatch 07_count_reads_paired.sh
 
 ---
 
-### **PHASE 5: Statistical Analysis & Functional Annotation **
+### **PHASE 5: Statistical Analysis & Functional Annotation**
 
 #### 5.1 Merge Read Counts Across Samples
 ```bash
