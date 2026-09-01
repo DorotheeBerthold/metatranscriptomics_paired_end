@@ -55,7 +55,32 @@ for (org in org_list) {
   write_rds(select(anno, -translation), file.path(dir_temp_anno, paste0(org, "_anno.rds")))
 }
 
-# 3. Combine Multi-Tool Annotations --------------------------------------------
+# 3. Run the different annotation pipelines ------------------------------------
+# 1. KAAS: https://www.genome.jp/tools/kaas/
+#    - Upload the generated FASTA files
+#    - Select "BBH" method and appropriate taxonomic group
+#    - Download the results as "<organism>_kaas.txt" and save in "fasta_protein/" folder
+
+# 2. eggNOG-mapper: https://emapper.embl.de/
+#    - Use eggnog_map_loop.sh script to batch submit FASTA files
+#    - Download the results as "<organism>.emapper.annotations" and save in "eggnog_annotations/" folder
+
+# 3. KOalaFam: https://www.genome.jp/tools/kofamkoala/
+#    - Upload the generated FASTA files
+#    - download results and save in fastea_protein/ folder as "<organism>_koala.txt"
+
+# 4. dbCAN mapping for CAZymes:
+#    - Use dbCAN2 web server: http://bcb.unl.edu/dbCAN2/blast.php
+#    - Upload the generated FASTA files
+#    - Download the results as "<organism>_dbcan.txt" and save in "fasta_protein/" folder
+
+# 4. Cayman mapping for CAZyme families: 
+#   - copy the cleaned faa files into the cayman folder
+#   - run run_cayman.sh from within the folder
+#   - copy the .csv to the "fasta_protein/" folder
+
+
+# 4. Combine Multi-Tool Annotations --------------------------------------------
 
 for (org in org_list) {
   message("Combining annotations for: ", org)
