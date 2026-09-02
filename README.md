@@ -1,7 +1,9 @@
 # Metatranscriptomics Paired-End Analysis Pipeline
 
 
-A comprehensive workflow for processing and analyzing metatranscriptomic data based on the metatranscriptome workshop by the [Parkinson Lab Metatranscriptome Workshop](https://github.com/ParkinsonLab/Metatranscriptome-Workshop). This modified pipeline performs quality control, read preprocessing, contamination removal, taxonomic/functional annotation, and statistical analysis to identify differentially expressed genes across conditions both in individual and paired samples. It has been optimised for paired-end data processed on a high-performance cluster (HPC) to submit via slurm.
+Adapted from the [Parkinson Lab Metatranscriptome Workshop](https://github.com/ParkinsonLab/Metatranscriptome-Workshop), this end-to-end pipeline streamlines the processing, annotation, and statistical analysis of metatranscriptomic data. Optimized for paired-end sequencing and scalable HPC execution via SLURM, it covers the entire analytical lifecycle—from raw read quality control, preprocessing, and contamination removal to functional annotation and differential expression testing across paired or independent experimental conditions.
+
+Tailored specifically for defined microbial communities, the workflow also features dedicated modules to construct custom rRNA depletion databases and generate reference pseudogenomes. This allows reads to be aligned directly to known reference genomes, bypassing the need for de novo assembly or post-hoc taxonomic binning.
 
 
 ---
