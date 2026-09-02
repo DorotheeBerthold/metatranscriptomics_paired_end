@@ -243,11 +243,19 @@ Rscript 09_PCA.R
   - PCA plots
   - `results/gene_counts_wide_metadata.csv` (with PCA scores)
 
-#### 5.3 Differential Expression Analysis (DESeq2)
+#### 5.3 Differential Expression Analysis (DESeq2) either paired or individual samples
 ```bash
 Rscript 10_DESeq2_taxon_normalised.R
 ```
-**Input:** `results/gene_counts_wide_mRNA.csv`  
+or
+
+```bash
+Rscript 10_DESeq2_taxon_normalised_paired_samples.R
+```
+**Input:** 
+`results/gene_counts_wide_mRNA.csv`  the merged read counts across samples
+`results/abundances_TX_sorted.csv` the paired 16S or metagenomic sequences with relative abundances
+
 **Output:** 
   - DESeq2 results files
   - Normalized counts
