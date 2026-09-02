@@ -253,8 +253,8 @@ or
 Rscript 10_DESeq2_taxon_normalised_paired_samples.R
 ```
 **Input:** 
-`results/gene_counts_wide_mRNA.csv`  the merged read counts across samples
-`results/abundances_TX_sorted.csv` the paired 16S or metagenomic sequences with relative abundances
+- `results/gene_counts_wide_mRNA.csv`  the merged read counts across samples
+- `results/abundances_TX_sorted.csv` the paired 16S or metagenomic sequences with relative abundances
 
 **Output:** 
   - DESeq2 results files
