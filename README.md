@@ -5,6 +5,7 @@ Adapted from the [Parkinson Lab Metatranscriptome Workshop](https://github.com/P
 
 Tailored specifically for defined microbial communities, the workflow also features dedicated modules to construct custom rRNA depletion databases and generate reference pseudogenomes. This allows reads to be aligned directly to known reference genomes, bypassing the need for de novo assembly or post-hoc taxonomic binning.
 
+This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/). This means that you are able to copy, share and modify the work, as long as the result is distributed under the same license.
 
 ---
 
